@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { IUserData, IUserMessage } from "../types";
 
@@ -28,49 +28,48 @@ const DrawGame = () => {
   const [definitions, setDefinitions] = useState<string[]>([]);
 
   useEffect((): any => {
-    socket = io({ path: "/api/socketio" });
+    fetch("/api/socketio").finally(() => {
+      socket = io({ path: "/api/socketio" });
 
-    socket.on("connect", () => {
-      const enteredUsername = window.prompt("Enter your name") || "Bobby";
-      setUser(enteredUsername);
+      socket.on("connect", () => {
+        const enteredUsername = window.prompt("Enter your name") || "Bobby";
+        setUser(enteredUsername);
 
-      socket.emit("playerJoin", enteredUsername);
+        socket.emit("playerJoin", enteredUsername);
 
-      setConnected(true);
+        setConnected(true);
+      });
+
+      socket.on("message", (data: IUserMessage[]) => {
+        setChat(data);
+      });
+
+      socket.on("userDataUpdate", (data: IUserData) => {
+        setUserData(data);
+      });
+
+      socket.on("newWord", async (word: string) => {
+        const response = await fetch(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+        );
+        const data = await response.json();
+        const meanings = data[0].meanings;
+        let parsedDefinitions = meanings.flatMap(
+          (meaning: any) => meaning.definitions
+        );
+        parsedDefinitions = parsedDefinitions.flatMap((definition: any) =>
+          definition.definition.replace(new RegExp(word, "g"), "[WORD]")
+        );
+        setDefinitions(parsedDefinitions);
+
+        // Clear chat after new word comes in
+        setChat([]);
+      });
+
+      socket.on("tick", (timeLeft: number) => {
+        setCounter(timeLeft);
+      });
     });
-
-    socket.on("message", (data: IUserMessage[]) => {
-      setChat(data);
-    });
-
-    socket.on("userDataUpdate", (data: IUserData) => {
-      setUserData(data);
-    });
-
-    socket.on("newWord", async (word: string) => {
-      const response = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-      );
-      const data = await response.json();
-      const meanings = data[0].meanings;
-      let parsedDefinitions = meanings.flatMap(
-        (meaning: any) => meaning.definitions
-      );
-      parsedDefinitions = parsedDefinitions.flatMap((definition: any) =>
-        definition.definition.replace(new RegExp(word, "g"), "[WORD]")
-      );
-      setDefinitions(parsedDefinitions);
-
-      console.log("New word", word);
-
-      // Clear chat after new word comes in
-      setChat([]);
-    });
-
-    socket.on("tick", (timeLeft: number) => {
-      setCounter(timeLeft);
-    });
-
     // socket disconnet onUnmount if exists
     if (socket) return () => socket.disconnect();
   }, []);
@@ -152,7 +151,12 @@ const DrawGame = () => {
               })
               .map(([id, statistics], i) => {
                 return (
-                  <li key={i}>
+                  <li
+                    key={i}
+                    style={{
+                      fontWeight: id === socket.id ? "bold" : "normal",
+                    }}
+                  >
                     {statistics.username} | {statistics.points} points |{" "}
                     {statistics.guesses} guesses
                   </li>
