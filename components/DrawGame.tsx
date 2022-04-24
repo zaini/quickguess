@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { IUserData, IUserMessage } from "../types";
+import { IUserData, IUserMessage } from "../utils/types";
 
 /**
+ * Ideas:
  * If user has not joined the game, make them enter a username to join the game
  * Once user has joined, add them to the chat with all the other users
  * Every 30 seconds a drawing is made. Users guess the drawing. Correct guesses don't show up in the chat. Incorrect guesses show up in chat.
@@ -49,6 +50,7 @@ const DrawGame = () => {
       });
 
       socket.on("newWord", async (word: string) => {
+        console.log(word);
         const response = await fetch(
           `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
         );
