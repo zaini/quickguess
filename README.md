@@ -1,34 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ✏ QuickGuess
 
-## Getting Started
+Using [WebSockets](https://en.wikipedia.org/wiki/WebSocket) via [Socket.IO](https://socket.io/) to enable a multi-player word-guessing game.
 
-First, run the development server:
+![QuickGuess Screenshot](/quickguess.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## ⚙ Setup & Installation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. `yarn install` to install packages
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+2. a. `yarn dev` to run in development mode
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+   b. `yarn build` and `yarn start` to build and start production server
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+3. Enjoy at `http://localhost:3000/`
 
-## Learn More
+## Other
 
-To learn more about Next.js, take a look at the following resources:
+This was my second time trying out WebSockets to see how they work. Overall they're quite simple to add to use but I haven't looked into the best practices and so have just used it in a way that I thought made sense.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[Vercel doesn't support WebSocket connections](https://vercel.com/support/articles/do-vercel-serverless-functions-support-websocket-connections) - so something else like Heroku should be used for hosting. Alternatively, the WebSocket functionality could be reimplemented with [Pusher](https://pusher.com/channels), but I haven't looked into a good open source option and I'd rather self-host.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Inspired by [Semantle](https://semantle.novalis.org/).
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Seeing as this was an attempt to just try WebSockets, no attempts were made to style this project so it looks 🤮
