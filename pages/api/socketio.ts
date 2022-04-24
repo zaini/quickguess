@@ -1968,7 +1968,7 @@ const getRandomWord = () => {
 };
 
 let word = getRandomWord();
-const DEFAULT_TIME = 7;
+const DEFAULT_TIME = 45;
 let timeLeft = DEFAULT_TIME;
 
 let messages: IUserMessage[] = [];
@@ -1995,11 +1995,12 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
           username: userName,
         };
         io.sockets.emit("userDataUpdate", userData);
+        io.sockets.emit("newWord", word);
       });
 
       socket.on("message", (data: IUserMessage) => {
         userData[data.id].guesses += 1;
-        if (data.message === word) {
+        if (data.message.toLowerCase() === word.toLocaleLowerCase()) {
           if (completedThisRound.has(data.id)) {
             return;
           }
@@ -2024,6 +2025,7 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
       socket.on("disconnecting", () => {
         console.log("Disconnecting player ID: ", userData[socket.id].username);
         delete userData[socket.id];
+        io.sockets.emit("userDataUpdate", userData);
       });
     });
 
